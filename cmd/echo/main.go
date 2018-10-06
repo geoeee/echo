@@ -26,7 +26,7 @@ func main() {
 
 		log.Println("echo ...")
 		resp := &response{
-			PodName: os.Getenv("POD_NAME"),
+			PodName: os.Getenv("HOSTNAME"),
 			Version: version.Version,
 			Time:    time.Now(),
 			Headers: req.Header,
