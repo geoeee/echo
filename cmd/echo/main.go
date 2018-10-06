@@ -6,14 +6,17 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/zhangzhoujian/echo/pkg/version"
 )
 
 type response struct {
-	Version string    `json:"version"`
-	Time    time.Time `json:"time"`
+	PodName string      `json:"pod_name"`
+	Version string      `json:"version"`
+	Time    time.Time   `json:"time"`
+	Headers interface{} `json:"headers"`
 }
 
 func main() {
@@ -21,9 +24,12 @@ func main() {
 
 	helloHandler := func(w http.ResponseWriter, req *http.Request) {
 
+		log.Println("echo ...")
 		resp := &response{
+			PodName: os.Getenv("POD_NAME"),
 			Version: version.Version,
 			Time:    time.Now(),
+			Headers: req.Header,
 		}
 
 		bt, _ := json.MarshalIndent(resp, "", "  ")
@@ -31,5 +37,6 @@ func main() {
 	}
 
 	http.HandleFunc("/echo", helloHandler)
+	log.Println("starting echo service listen :8080 ...")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
